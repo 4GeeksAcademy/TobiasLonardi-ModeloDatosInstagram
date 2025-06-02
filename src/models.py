@@ -24,6 +24,7 @@ class User(db.Model):
     followers:Mapped[list["Follower"]] = relationship(back_populates="owner_user")
     post:Mapped["Post"] = relationship(back_populates="users")
     media:Mapped["Media"] = relationship(back_populates="owners")
+    author_comment: Mapped["Comment"] = relationship(back_populates="author")
     
 
 class Media(db.Model):
@@ -41,6 +42,16 @@ class Post(db.Model):
     user_id:Mapped[int]=mapped_column(ForeignKey("user.id"), nullable=False)
     users:Mapped[list["User"]]= relationship(back_populates="post")
     media:Mapped["Media"]= relationship(back_populates="owner")
+    post_comment:Mapped["Comment"] = relationship(back_populates="post")
+
+class Comment(db.Model):
+    __tablename__="comment"
+    id:Mapped[int] = mapped_column(primary_key=True)
+    comment_text:Mapped[str] = mapped_column(Text, nullable=False)
+    author_id:Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    post_id:Mapped[int] = mapped_column(ForeignKey("post.id"), nullable=False)
+    post:Mapped[list["Post"]] = relationship(back_populates="post_comment")
+    author: Mapped[list["User"]] = relationship(back_populates="author_comment")
 
 
 
